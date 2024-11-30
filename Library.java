@@ -1,21 +1,21 @@
-import java.util.ArrayList; 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Library {
     private List<Member> members = new ArrayList<Member>();
-    private List<Book> books = new ArrayList<Book>();
+    private List<Book> books = new ArrayList<Book>(); // better name here would be "inventory"
 
     // Add a new member to the library
     public void addMember(Member member) {
         members.add(member);
     }
     
-    // Add a new book to the library
-    public void addBook(Book book) {
+    // Add a new book to the library 
+    public void addBook(Book book) { // better method name: addToInventory(Book book), then you don't need the comment for the method, since the name already tells you what it does. 
         books.add(book);
     }
 
-    // Find a member by ID
+    // Find a member by ID <- remove useless comments in the code, and give the method a good name for readability. 
     public Member findMemberById(int id) {
         for (Member member : members) {
             if (member.getId() == id) {

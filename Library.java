@@ -1,47 +1,61 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Library {
-    private List<Member> members = new ArrayList<Member>();
-    private List<Book> books = new ArrayList<Book>(); // better name here would be "inventory"
+    private Map<Integer, Member> members = new HashMap<>();
+    private Map<Integer, Book> bookInventory = new HashMap<>();
+    private final Map<Integer, Set<Integer>> borrowMap;
 
-    // Add a new member to the library
+    public Library() {
+        this.borrowMap = new HashMap<>();
+    }
+
     public void addMember(Member member) {
-        members.add(member);
+        members.put(member.getId(), member);
     }
     
-    // Add a new book to the library 
-    public void addBook(Book book) { // better method name: addToInventory(Book book), then you don't need the comment for the method, since the name already tells you what it does. 
-        books.add(book);
+    public void addToInventory(Book book) {
+        bookInventory.put(book.getId(), book);
     }
 
-    // Find a member by ID <- remove useless comments in the code, and give the method a good name for readability. 
     public Member findMemberById(int id) {
-        for (Member member : members) {
-            if (member.getId() == id) {
-                return member;
-            }
-        }
-        return null;
+        return members.get(id);
     }
 
-    // Find a book by ID
     public Book findBookById(int id) {
-        for (Book book : books) {
-            if (book.getId() == id) {
-                return book;
-            }
-        }
-        return null;
+        return bookInventory.get(id);
     }
 
-    // Get the list of members
-    public List<Member> getMembers() {
+    public Map<Integer, Member> getMembers() {
         return members;
     }
     
-    // Get the list of books
-    public List<Book> getBooks() {
-        return books;
+    public Map<Integer, Book> getBookInventory() {
+        return bookInventory;
+    }
+
+    public void addBorrow(int memberId, int bookId) {
+        borrowMap.computeIfAbsent(memberId, k-> new HashSet<>()).add(bookId);
+        bookInventory.get(bookId).checkedOut();
+    }
+
+    public void removeBorrow(int memberId, int bookId) {
+        Set<Integer> borrowedBooks = borrowMap.get(memberId);
+        
+        if (borrowedBooks != null) {
+            borrowedBooks.remove(bookId);
+            bookInventory.get(bookId).returned();
+            
+            if (borrowedBooks.isEmpty()) {
+                borrowMap.remove(memberId);
+            }
+        }
+    }
+
+    public Set<Integer> getBorrowedBooks(int memberId) {
+        return borrowMap.getOrDefault(memberId, Collections.emptySet());
     }
 }

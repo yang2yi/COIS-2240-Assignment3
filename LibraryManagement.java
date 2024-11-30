@@ -1,15 +1,17 @@
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set; 
 
 public class LibraryManagement {
     private Library library = new Library();
+    private Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         new LibraryManagement().run();
     }
 
     private void run() {
-        Scanner scanner = new Scanner(System.in);
         boolean running = true;
 
         while (running) {
@@ -32,32 +34,23 @@ public class LibraryManagement {
 
             switch (choice) {
                 case 1:
-                    System.out.print("Enter member ID: ");
-                    int id = scanner.nextInt();
-                    scanner.nextLine();
+                    int id = getMemberIdFromInput();   
+                    String name = getMemberNameFromInput();
+
+                    library.addMember(new Member(id, name));
                     
-                	System.out.print("Enter member name: ");
-                    String name = scanner.nextLine();
-
-                    Member newMember = new Member(id, name);
-                    library.addMember(newMember);
                     System.out.println("Member added successfully.");
-                    for (Member member : library.getMembers().values()) {
-                        System.out.println(member.toString());
-                    }
-
                     System.out.println();
+                    
                     break;
                 case 2:
-                    System.out.print("Enter book ID: ");
-                    id = scanner.nextInt();
-                    scanner.nextLine();
+                    id = getBookIdFromInput();
 
                 	System.out.print("Enter book title: ");
                     String title = scanner.nextLine();
                     
-                    Book newBook = new Book(id, title);
-                    library.addToInventory(newBook);
+                    library.addToInventory(new Book(id, title));
+
                     System.out.println("Book added to library successfully.");
                     System.out.println();
                     
@@ -67,9 +60,8 @@ public class LibraryManagement {
                     for (Member member : library.getMembers().values()) {
                         System.out.println(member.toString());
                     }
-                    
-                    System.out.print("Enter member ID: ");
-                    int memberId = scanner.nextInt();
+                
+                    int memberId = getMemberIdFromInput();
                     
                     System.out.println("\n--- Available Books ---");
                     for (Book book : library.getBookInventory().values()) {
@@ -77,10 +69,7 @@ public class LibraryManagement {
                             System.out.println(book.toString());
                     }
                     
-                    System.out.print("Enter book ID: ");
-                    int bookId = scanner.nextInt();
-                    
-                    scanner.nextLine();
+                    int bookId = getBookIdFromInput();
 
                     Member member = library.findMemberById(memberId);
                     Book book = library.findBookById(bookId);
@@ -94,13 +83,8 @@ public class LibraryManagement {
                     System.out.println();
                     break;
                 case 4:
-                	System.out.print("Enter member ID: ");
-                    memberId = scanner.nextInt();
-                    
-                    System.out.print("Enter book ID: ");
-                    bookId = scanner.nextInt();
-                    
-                    scanner.nextLine();
+                    memberId = getMemberIdFromInput();
+                    bookId = getBookIdFromInput();
 
                     member = library.findMemberById(memberId);
                     book = library.findBookById(bookId);
@@ -114,10 +98,7 @@ public class LibraryManagement {
                     System.out.println();
                     break;
                 case 5:
-                	System.out.print("Enter member ID: ");
-                    memberId = scanner.nextInt();
-                    scanner.nextLine();
-
+                    memberId = getMemberIdFromInput();
                     Member specificMember = library.findMemberById(memberId);
                     
                     if (specificMember != null) {
@@ -137,16 +118,27 @@ public class LibraryManagement {
                     break;
                 case 7:
                     System.out.println("\n--- All Members ---");
-                    for (Member m : library.getMembers().values()) {
-                        System.out.println(m.toString());
+                    Map<Integer, Member> members = library.getMembers();
+                    if(members == null || members.values().size() == 0) {
+                        System.out.println("Empty");
+                    } else {
+                        for (Member m : members.values()) {
+                            System.out.println(m.toString());
+                        }
                     }
-                 
+                    
                     System.out.println();
                     break;
                 case 8:
                     System.out.println("\n--- All Library Books ---");
-                    for (Book b : library.getBookInventory().values()) {
-                        System.out.println(b.toString());
+                    
+                    Map<Integer, Book> books = library.getBookInventory();
+                    if(books == null || books.values().size() == 0) {
+                        System.out.println("Empty");
+                    } else {
+                        for (Book b : books.values()) {
+                            System.out.println(b.toString());
+                        }
                     }
              
                     System.out.println();
@@ -164,5 +156,29 @@ public class LibraryManagement {
         }
 
         scanner.close();
+    }
+
+
+    private int getMemberIdFromInput() {
+        System.out.print("Enter member ID: ");
+        return getUserInputInt();
+    }
+
+    private int getBookIdFromInput() {
+        System.out.print("Enter book ID: ");
+        return getUserInputInt();
+    }
+
+    private int getUserInputInt() {
+        int id = this.scanner.nextInt();
+        scanner.nextLine();
+
+        return id;
+    }
+
+    private String getMemberNameFromInput() {
+        System.out.print("Enter member name: ");
+        
+        return scanner.nextLine();
     }
 }
